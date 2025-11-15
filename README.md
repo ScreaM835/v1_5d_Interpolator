@@ -28,3 +28,11 @@ docker run --rm -p 3000:3000 -e NEXT_PUBLIC_API_URL="http://localhost:8000" v1-5
 ```
 
 The frontend image serves the pre-built app with `next start` on port `3000`. Override `NEXT_PUBLIC_API_URL` if your backend lives elsewhere.
+
+### Docker Compose (backend + frontend)
+
+```bash
+docker compose up --build
+```
+
+This command builds both images, launches them on a shared network, wires the frontend to `http://backend:8000`, and enables health checks. Visit `http://localhost:3000` for the UI and `http://localhost:8000` for the API.

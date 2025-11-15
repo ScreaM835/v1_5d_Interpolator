@@ -31,6 +31,11 @@ class Item(BaseModel):
 def hello():
     return {"message": "Hello gay👋"}
 
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/5d_")
 def create(item: Item):
     inputs = [

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const INPUT_KEYS = ["input1", "input2", "input3", "input4", "input5"] as const;
 const HELLO_TIMEOUT_MS = 4000;
 const SUBMIT_TIMEOUT_MS = 8000;

@@ -1,8 +1,7 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS base
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
+FROM node:20-bullseye AS base
+ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
 # Install dependencies separately for better caching
@@ -12,19 +11,26 @@ RUN npm ci
 
 # Build the Next.js app
 FROM base AS builder
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
+    NEXT_DISABLE_LIGHTNINGCSS=true \
+    TAILWIND_DISABLE_LIGHTNINGCSS=true \
+    NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
 # Production runtime
-FROM node:20-alpine AS runner
+FROM node:20-bullseye-slim AS runner
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Only copy what is needed to run "next start"
 COPY --from=builder /app/public ./public
